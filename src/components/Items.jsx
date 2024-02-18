@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Card, Row, Col, Form, Button } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
 
 const Items = () => {
   var [items, setItems] = useState([]);
+  const navigate = useNavigate();
+  const [selectedItems, setSelectedItems] = useState([]);
   const [queryParams, setQueryParams] = useState({
     current: 1,
     lang: 'EN',
@@ -48,6 +51,28 @@ const Items = () => {
     e.preventDefault();
     setLoading(true);
     fetchItems();
+  };
+
+
+  const handleCheckboxChange = (itemId) => {
+    if (selectedItems.includes(itemId)) {
+      // Item is already selected, remove it from the array
+      setSelectedItems((prevSelectedItems) =>
+        prevSelectedItems.filter((id) => id !== itemId)
+      );
+    } else {
+      // Item is not selected, add it to the array
+      setSelectedItems((prevSelectedItems) => [...prevSelectedItems, itemId]);
+    }
+  };
+
+  const handlePlaceOrder = () => {
+    // Implement your logic for placing the order with the selected items
+    sessionStorage.setItem('Orders' , selectedItems)
+    navigate('/create-order');
+    console.log('Placing order with items:', selectedItems);
+    // Clear the selected items after placing the order
+    setSelectedItems([]);
   };
 
   return (
@@ -108,8 +133,14 @@ const Items = () => {
             />
           </Form.Group>
         </Col>
-        <Col xs={12} className='d-flex align-items-center justify-content-center'>
+        <Col xs={12} md={2} lg={2}>
           <Button type="submit">Apply Filters</Button>
+        </Col>
+
+        <Col xs={12} md={2} lg={2} >
+            <Button onClick={handlePlaceOrder} disabled={selectedItems.length === 0}>
+              Place Order
+            </Button>
         </Col>
       </Row>
     </Form>
@@ -126,7 +157,11 @@ const Items = () => {
                   {queryParams.includePricingDetails && (
                     <Card.Text>Price: {item.fromValue} {item.currency} - {item.toValue} {item.currency}  </Card.Text>
                   )}
-                 <Button type="submit">Order</Button>
+                   <Form.Check
+                    type="checkbox"
+                    checked={selectedItems.includes(item.id)}
+                    onChange={() => handleCheckboxChange(item.id)}
+                  />
                 </Card.Body>
               </Card>
             </Col>
