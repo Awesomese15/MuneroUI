@@ -3,8 +3,11 @@ import React,  { useState }  from 'react';
 import { Container, Form, Button } from 'react-bootstrap';
 import '../css/LoginForm.css';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+import authService from '../services/authService'
 
 const LoginForm = () => {
+  const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
     username: '',
@@ -55,15 +58,29 @@ const LoginForm = () => {
       console.log('Password:', formData.password);
       
       // Add your authentication logic here
+      let response =''; 
+
+      console.log('response '+response);
+
 
       try {
-        const response = await axios.post('http://localhost:9090/munero/login', {
-          username: formData.username,
-          password: formData.password,
-        });
+        // const response = await axios.post('http://localhost:9090/munero/login', {
+        //   username: formData.username,
+        //   password: formData.password,
+        // });
 
-        console.log('Authentication successful:', response.data);
-        sessionStorage.setItem('Authorization',response.data)
+        authService.login(formData.username,formData.password)
+        .then((res)=>{
+          response = res;
+          console.log('Authentication successful:', response);
+          sessionStorage.setItem('Authorization',response.data);
+
+          if(res.status === 200){
+            navigate('/items');
+        }
+        })
+        
+
 
         // Handle successful authentication, e.g., redirect the user
       } catch (error) {
