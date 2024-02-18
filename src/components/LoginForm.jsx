@@ -69,7 +69,7 @@ const LoginForm = () => {
         //   password: formData.password,
         // });
 
-        authService.login(formData.username,formData.password)
+       await authService.login(formData.username,formData.password)
         .then((res)=>{
           response = res;
           console.log('Authentication successful:', response);

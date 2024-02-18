@@ -10,7 +10,7 @@ const App = ()=>{
     <Router>
       <Routes>
         <Route index element={<LoginForm/>} />
-        <Route path="/items" element={<PrivateRoute Component={Items} />} />
+        <Route path="items" element={<PrivateRoute Component={Items} />} />      
       </Routes>
     </Router>
   );

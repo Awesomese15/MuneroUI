@@ -1,14 +1,31 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useNa} from 'react';
 import { Route, Navigate } from 'react-router-dom';
 import authService from '../services/authService'
+import { useNavigate } from 'react-router-dom';
 
-// const PrivateRoute = ({ component: Component, ...rest }) => {
+const PrivateRoute = (props) => {
+    const{Component} = props;
+    const navigate = useNavigate()
+    useEffect(()=>{
+        let isTokenPresent = sessionStorage.getItem('Authorization');
+        if(!isTokenPresent){
+            navigate('/');
+        }
+    })
+    return(
+        <div>
+            <Component/>
+        </div>
+    )
+
+
+}
 
 //     return(
 //         <Route
 //         {...rest}
 //         render={(props) =>
-//           authService.login() ? (
+//           authService.isAuthenticated() ? (
 //             <Component {...props} />
 //           ) : (
 //             <Navigate to="/login" />
@@ -22,20 +39,21 @@ import authService from '../services/authService'
 // export default PrivateRoute;
 
 
-const PrivateRoute = ({ Component }) => {
+// const PrivateRoute = ({ Component }) => {
  
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
+//     const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-    useEffect(() => {
-        const authenticateUser = async () => {
-          const isAuthenticatedValue = await authService.isAuthenticated();
-          setIsAuthenticated(isAuthenticatedValue);
-        };
+//     useEffect(() => {
+//         const authenticateUser = async () => {
+//           const isAuthenticatedValue = await authService.isAuthenticated();
+//           setIsAuthenticated(isAuthenticatedValue);
+//           return isAuthenticated ? <Component /> : <Navigate to="/login" />;
+//         };
       
-        authenticateUser();
-      }, []); 
+//         authenticateUser();
+//       }, []); 
 
- console.log("isAuthenticated",isAuthenticated)
-  return isAuthenticated ? <Component /> : <Navigate to="/login" />;
-};
+//  console.log("isAuthenticated",isAuthenticated)
+  
+// };
 export default PrivateRoute;
