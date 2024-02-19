@@ -20,40 +20,4 @@ const PrivateRoute = (props) => {
 
 
 }
-
-//     return(
-//         <Route
-//         {...rest}
-//         render={(props) =>
-//           authService.isAuthenticated() ? (
-//             <Component {...props} />
-//           ) : (
-//             <Navigate to="/login" />
-//           )
-//         }
-//       />
-//     );
-
-// };
-
-// export default PrivateRoute;
-
-
-// const PrivateRoute = ({ Component }) => {
- 
-//     const [isAuthenticated, setIsAuthenticated] = useState(false);
-
-//     useEffect(() => {
-//         const authenticateUser = async () => {
-//           const isAuthenticatedValue = await authService.isAuthenticated();
-//           setIsAuthenticated(isAuthenticatedValue);
-//           return isAuthenticated ? <Component /> : <Navigate to="/login" />;
-//         };
-      
-//         authenticateUser();
-//       }, []); 
-
-//  console.log("isAuthenticated",isAuthenticated)
-  
-// };
 export default PrivateRoute;

@@ -1,15 +1,22 @@
 // CreateOrder.js
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import { Container, Form, Button, Row, Col } from 'react-bootstrap';
-import { useLocation } from 'react-router-dom';
+import { useLocation} from 'react-router-dom';
 import Order from '../domain/Order';
 import ListItem from '../domain/ListItem';
 import orderService from '../services/orderService';
+import QRCode from 'qrcode.react';
+import Modal from 'react-bootstrap/Modal';
+import { useNavigate } from 'react-router-dom';
 
 
 const CreateOrder = () => {
-const location = useLocation();
+
 const selectedItems = sessionStorage.getItem('Orders').split(',')|| [];
+const [orderCode, setOrderCode] = useState('');
+const [url, setUrl] = useState('');
+const [showModal, setShowModal] = useState(false);
+const navigate = useNavigate();
 console.log("selectedItems", selectedItems);
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -34,13 +41,39 @@ console.log("selectedItems", selectedItems);
       console.log('Order Data:', orderInstance);
       const response = await orderService.placeOrder(orderInstance).then(
         (res)=>{
-            console.log('res', res);
+            console.log('res', res.data.id);
+            orderService.orderStatus(res.data.id).then(
+                (res2) =>{
+                    console.log('res2', res2);
+                    const claimUrl=res2.data.lineItems[0].claimURL;
+                    setUrl(res2.data.lineItems[0].claimURL)
+                    console.log(claimUrl)
+                    setOrderCode(res2.data.lineItems[0].claimURL);
+                    console.log('ordercode', orderCode)
+                    //setShowModal(true);
+
+                }
+               
+            )
         }
 
       )
+};
+useEffect(() => {
+  // This effect runs whenever orderCode changes
+  console.log('ordercode ====', orderCode);
+  setShowModal(true);
+}, [orderCode]);
 
 
-  };
+
+const handleCloseModal = () => {
+       
+  setShowModal(false);
+  setOrderCode(null);
+
+  navigate('/items');
+};
 
   return (
     <Container className="d-flex align-items-center justify-content-center" style={{ minHeight: '100vh' }}>
@@ -72,7 +105,7 @@ console.log("selectedItems", selectedItems);
           <Col>
             <Form.Group controlId="referenceNo">
               <Form.Label>Reference No</Form.Label>
-              <Form.Control type="text" placeholder="Enter reference number" name='referenceNo' required />
+              <Form.Control type="text" placeholder="Enter reference number" name='referenceNo' />
             </Form.Group>
           </Col>
           <Col>
@@ -133,6 +166,28 @@ console.log("selectedItems", selectedItems);
 
         <Button type="submit" className="mt-4">Submit Order</Button>
       </Form>
+      {orderCode && (
+        <Modal
+          show={showModal}
+          onHide={handleCloseModal}
+          centered
+          backdrop="static"
+          keyboard={false}
+        >
+          <Modal.Header closeButton>
+            <Modal.Title>Order Successfull</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <QRCode value={orderCode.claimUrl} size={256}/>
+            <p>Also you can check {url}</p>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={handleCloseModal}>
+              Close
+            </Button>
+          </Modal.Footer>
+        </Modal>
+      )}
     </Container>
   );
 };

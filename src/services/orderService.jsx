@@ -10,6 +10,16 @@ const orderService = {
         });
         return response;
 
+    },
+    orderStatus: async(id) =>{
+
+        const response = await axios.get(`${BASE_URL}/order-status/${id}`, {
+            headers: {
+                Authorization: token,
+              },
+        });
+
+        return response;
     }
 }
 export default orderService;
