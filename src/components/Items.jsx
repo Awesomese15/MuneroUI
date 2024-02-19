@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Card, Row, Col, Form, Button } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
+import ErrorModal from './ErrorModal';
+import ErrorBoundary from './ErrorBoundary';
 
 const Items = () => {
   var [items, setItems] = useState([]);
+  const [error, setError] = useState(null);
   const navigate = useNavigate();
   const [selectedItems, setSelectedItems] = useState([]);
   const [queryParams, setQueryParams] = useState({
@@ -34,6 +37,7 @@ const Items = () => {
       console.log(data);
     } catch (error) {
       console.error('Error fetching items:', error.message);
+      setError('Error fetching items. Please try again later.');
     }finally{
         setLoading(false);
     }
@@ -77,6 +81,8 @@ const Items = () => {
 
   return (
     <Container>
+    <ErrorBoundary>
+    {error && <ErrorModal errorMessage={error} />}
     <h2 className="mt-4 mb-4">Items</h2>
     <Form onSubmit={handleSubmit} className="mb-4">
       <Row>
@@ -170,6 +176,7 @@ const Items = () => {
       ) : (
         <p>No items found.</p>
       )}
+      </ErrorBoundary>
   </Container>
   );
 };

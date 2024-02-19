@@ -8,11 +8,14 @@ import orderService from '../services/orderService';
 import QRCode from 'qrcode.react';
 import Modal from 'react-bootstrap/Modal';
 import { useNavigate } from 'react-router-dom';
+import ErrorModal from './ErrorModal';
+import ErrorBoundary from './ErrorBoundary';
 
 
 const CreateOrder = () => {
 
 const selectedItems = sessionStorage.getItem('Orders').split(',')|| [];
+const [error, setError] = useState(null);
 const [orderCode, setOrderCode] = useState('');
 const [url, setUrl] = useState('');
 const [showModal, setShowModal] = useState(false);
@@ -39,6 +42,7 @@ console.log("selectedItems", selectedItems);
       );
 
       console.log('Order Data:', orderInstance);
+      try{
       const response = await orderService.placeOrder(orderInstance).then(
         (res)=>{
             console.log('res', res.data.id);
@@ -57,7 +61,9 @@ console.log("selectedItems", selectedItems);
             )
         }
 
-      )
+      )}catch{
+        setError('Error fetching items. Please try again later.');
+      }
 };
 useEffect(() => {
   // This effect runs whenever orderCode changes
@@ -77,6 +83,8 @@ const handleCloseModal = () => {
 
   return (
     <Container className="d-flex align-items-center justify-content-center" style={{ minHeight: '100vh' }}>
+      <ErrorBoundary>
+      {error && <ErrorModal errorMessage={error} />}
       <Form onSubmit={handleSubmit} className="w-75">
         <h2 className="text-center mb-4">Create Order</h2>
 
@@ -188,6 +196,7 @@ const handleCloseModal = () => {
           </Modal.Footer>
         </Modal>
       )}
+      </ErrorBoundary>
     </Container>
   );
 };

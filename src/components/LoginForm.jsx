@@ -2,7 +2,6 @@
 import React,  { useState }  from 'react';
 import { Container, Form, Button } from 'react-bootstrap';
 import '../css/LoginForm.css';
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import authService from '../services/authService'
 
