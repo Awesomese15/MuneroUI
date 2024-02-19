@@ -113,7 +113,7 @@ const handleCloseModal = () => {
           <Col>
             <Form.Group controlId="referenceNo">
               <Form.Label>Reference No</Form.Label>
-              <Form.Control type="text" placeholder="Enter reference number" name='referenceNo' />
+              <Form.Control type="text" placeholder="Enter reference number" name='referenceNo' required/>
             </Form.Group>
           </Col>
           <Col>
